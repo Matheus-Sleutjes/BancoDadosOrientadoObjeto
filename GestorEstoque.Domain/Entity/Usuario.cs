@@ -6,7 +6,7 @@ namespace GestorEstoque.Domain.Entity
     {
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;
-        public DateOnly DataNascimento { get; set; }
+        public DateTime DataNascimento { get; set; }
         public byte[] Senha { get; set; }
         public byte[] SenhaSal { get; set; }
         [MaxLength(200)] 
