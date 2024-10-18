@@ -6,6 +6,6 @@ namespace GestorEstoque.Data
     public class GestorEstoqueContext : DbContext
     {
         public GestorEstoqueContext(DbContextOptions<GestorEstoqueContext> options) : base(options) { }
-        public DbSet<Usuario> Livros { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
     }
 }

@@ -11,6 +11,10 @@ builder.Services.AddControllers();
 builder.Services.RegisterConfig();
 
 Utils.StringConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<GestorEstoqueContext>(options =>
+{
+    options.UseNpgsql(Utils.StringConnection);
+});
 
 var app = builder.Build();
 
@@ -19,9 +23,9 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors(cors => cors.AllowAnyOrigin());
 
-var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
-var context = serviceScope.ServiceProvider.GetRequiredService<GestorEstoqueContext>();
-context.Database.Migrate();
+//var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
+//var context = serviceScope.ServiceProvider.GetRequiredService<GestorEstoqueContext>();
+//context.Database.Migrate();
 
 app.UseAuthorization();
 

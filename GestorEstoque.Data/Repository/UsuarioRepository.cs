@@ -6,38 +6,44 @@ namespace GestorEstoque.Data.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        //public void AddBySql(Livro livro, string connectionString)
-        //{
-        //    string sqlScript = "INSERT INTO \"Livros\" (\"Descricao\") VALUES (@Descricao)";
+        public void Add(Usuario usuario)
+        {
+            string sqlScript = File.ReadAllText(Path.Combine("..", "Script", "AddUsuario.sql"));
 
-        //    using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-        //    {
-        //        connection.Open();
+            using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
+            {
+                connection.Open();
 
-        //        using (var transaction = connection.BeginTransaction())
-        //        {
-        //            try
-        //            {
-        //                using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection, transaction))
-        //                {
-        //                    command.Parameters.AddWithValue("@Descricao", livro.Descricao);
-        //                    command.ExecuteNonQuery();
-        //                }
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@NomeCompleto", usuario.NomeCompleto);
+                            command.Parameters.AddWithValue("@DataNascimento", usuario.DataNascimento);
+                            command.Parameters.AddWithValue("@Senha", usuario.Senha);
+                            command.Parameters.AddWithValue("@SenhaSal", usuario.SenhaSal);
+                            command.Parameters.AddWithValue("@Email", usuario.Email);
+                            command.Parameters.AddWithValue("@Telefone", usuario.Telefone);
+                            command.Parameters.AddWithValue("@Ativo", usuario.Ativo);
+                            command.ExecuteNonQuery();
+                        }
 
-        //                transaction.Commit();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                transaction.Rollback();
-        //                Console.WriteLine($"Erro ao executar o comando SQL: {ex.Message}");
-        //            }
-        //            finally
-        //            {
-        //                connection.Close();
-        //            }
-        //        }
-        //    }
-        //}
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.WriteLine($"Erro -Repository - Add - Usuario: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
 
         public Usuario Find(int id)
         {

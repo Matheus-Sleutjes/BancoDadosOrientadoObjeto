@@ -13,5 +13,6 @@ namespace GestorEstoque.Domain.Entity
         public string Email { get; set; } = string.Empty;
         [MaxLength(100)]
         public string Telefone { get; set; } = string.Empty;
+        public bool Ativo { get; set; }
     }
 }
