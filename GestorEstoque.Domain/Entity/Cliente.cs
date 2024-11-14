@@ -2,18 +2,19 @@
 
 namespace GestorEstoque.Domain.Entity
 {
-    public class Usuario
+    public class Cliente
     {
         [Key]
-        public int UsuarioId { get; set; }
+        public int ClienteId { get; set; }
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;
-        public byte[] Senha { get; set; }
-        public byte[] SenhaSal { get; set; }
-        [MaxLength(150)] 
+        [MaxLength(15)]
+        public string CPF_CNPJ { get; set; } = string.Empty;
+        [MaxLength(150)]
         public string Email { get; set; } = string.Empty;
+        [MaxLength(200)]
+        public string Endereco { get; set; } = string.Empty;
         [MaxLength(15)]
         public string Telefone { get; set; } = string.Empty;
-        public bool Ativo { get; set; }
     }
 }
