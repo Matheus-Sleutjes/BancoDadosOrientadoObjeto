@@ -10,7 +10,6 @@ namespace GestorEstoque.Application.Service
     public class UsuarioService(IUsuarioRepository usuarioRepository) : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-        private readonly string CerealKey = "=-erIs1|L9zrvXqN9}5bdI{OXS1UZa^?X{/Re-/v>#RqN9}5bdI{OerIs1|L9zrvXqN9>#RqN9}5bdI{OerIs1|L9zrv";
 
         public async Task<bool> Add(UsuarioDto dto)
         {
