@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 
 builder.Services.RegisterConfig();
@@ -13,10 +11,6 @@ builder.Services.RegisterConfig();
 builder.Services.AddSwaggerGen();
 
 Utils.StringConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-//builder.Services.AddDbContext<GestorEstoqueContext>(options =>
-//{
-//    options.UseNpgsql(Utils.StringConnection);
-//});
 
 var app = builder.Build();
 
@@ -25,10 +19,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors(cors => cors.AllowAnyOrigin());
-
-//var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope();
-//var context = serviceScope.ServiceProvider.GetRequiredService<GestorEstoqueContext>();
-//context.Database.Migrate();
 
 app.UseAuthorization();
 
