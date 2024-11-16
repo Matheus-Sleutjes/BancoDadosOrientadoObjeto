@@ -6,14 +6,14 @@ namespace GestorEstoque.Data.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        public void Add(Usuario usuario)
+        public async Task<bool> Add(Usuario usuario)
         {
-            string sqlScript = File.ReadAllText(Path.Combine("..", "Script", "AddUsuario.sql"));
+            string sqlScript = File.ReadAllText(Path.Combine( "..", "GestorEstoque.Data", "Script", "Usuario", "AddUsuario.sql"));
 
             using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
             {
                 connection.Open();
-
+                var retorno = 0;
                 using (var transaction = connection.BeginTransaction())
                 {
                     try
@@ -21,13 +21,13 @@ namespace GestorEstoque.Data.Repository
                         using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@NomeCompleto", usuario.NomeCompleto);
-                            command.Parameters.AddWithValue("@DataNascimento", usuario.DataNascimento);
                             command.Parameters.AddWithValue("@Senha", usuario.Senha);
                             command.Parameters.AddWithValue("@SenhaSal", usuario.SenhaSal);
                             command.Parameters.AddWithValue("@Email", usuario.Email);
                             command.Parameters.AddWithValue("@Telefone", usuario.Telefone);
                             command.Parameters.AddWithValue("@Ativo", usuario.Ativo);
-                            command.ExecuteNonQuery();
+
+                            retorno = await command.ExecuteNonQueryAsync();
                         }
 
                         transaction.Commit();
@@ -35,47 +35,50 @@ namespace GestorEstoque.Data.Repository
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        Console.WriteLine($"Erro -Repository - Add - Usuario: {ex.Message}");
+                        Console.WriteLine($"Erro - Add - Usuario: {ex.Message}");
                     }
                     finally
                     {
                         connection.Close();
                     }
+                    return retorno == 1;
                 }
             }
         }
 
-        public Usuario Find(int id)
+        public async Task<Usuario> Find(int id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
             {
                 connection.Open();
                 try
                 {
-                    string sqlScript = File.ReadAllText(Path.Combine("..", "Script", "FindUsuario.sql"));
+                    string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "FindUsuario.sql"));
                     using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection))
                     {
-                        command.Parameters.AddWithValue("@Id", id);
+                        command.Parameters.AddWithValue("@UsuarioId", id);
 
-                        using (NpgsqlDataReader reader = command.ExecuteReader())
+                        using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                         {
                             if (reader.Read())
                             {
                                 int usuarioId = reader.GetInt32(0);
                                 string nomeCompleto = reader.GetString(1);
-                                DateTime dataNascimento = reader.GetDateTime(2);
-                                string email = reader.GetString(3);
-                                byte[] senha = reader.GetFieldValue<byte[]>(4);
-                                byte[] senhaSal = reader.GetFieldValue<byte[]>(5);
+                                string email = reader.GetString(2);
+                                byte[] senha = reader.GetFieldValue<byte[]>(3);
+                                byte[] senhaSal = reader.GetFieldValue<byte[]>(4);
+                                string telefone = reader.GetFieldValue<string>(5);
+                                bool ativo = reader.GetFieldValue<bool>(6);
 
                                 return new Usuario()
                                 {
-                                    Id = usuarioId,
+                                    UsuarioId = usuarioId,
                                     NomeCompleto = nomeCompleto,
-                                    DataNascimento = dataNascimento,
                                     Email = email,
                                     SenhaSal = senhaSal,
-                                    Senha = senha
+                                    Senha = senha,
+                                    Telefone = telefone,
+                                    Ativo = ativo
                                 };
                             }
                         }
@@ -93,37 +96,39 @@ namespace GestorEstoque.Data.Repository
                 }
             }
         }
-        public Usuario GetByEmail(string email)
+        public async Task<Usuario> FindByEmail(string email)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
             {
                 connection.Open();
                 try
                 {
-                    string sqlScript = File.ReadAllText(Path.Combine("..", "Script", "GetUsuarioByEmail.sql"));
+                    string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "FindUsuarioByEmail.sql"));
                     using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection))
                     {
                         command.Parameters.AddWithValue("@Email", email);
 
-                        using (NpgsqlDataReader reader = command.ExecuteReader())
+                        using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
                         {
                             if (reader.Read())
                             {
                                 int usuarioId = reader.GetInt32(0);
                                 string nomeCompleto = reader.GetString(1);
-                                DateTime dataNascimento = reader.GetDateTime(2);
-                                string _email = reader.GetString(3);
-                                byte[] senha = reader.GetFieldValue<byte[]>(4);
-                                byte[] senhaSal = reader.GetFieldValue<byte[]>(5);
+                                string _email = reader.GetString(2);
+                                byte[] senha = reader.GetFieldValue<byte[]>(3);
+                                byte[] senhaSal = reader.GetFieldValue<byte[]>(4);
+                                string telefone = reader.GetFieldValue<string>(5);
+                                bool ativo = reader.GetFieldValue<bool>(6);
 
                                 return new Usuario()
                                 {
-                                    Id = usuarioId,
+                                    UsuarioId = usuarioId,
                                     NomeCompleto = nomeCompleto,
-                                    DataNascimento = dataNascimento,
                                     Email = _email,
                                     SenhaSal = senhaSal,
-                                    Senha = senha
+                                    Senha = senha,
+                                    Telefone = telefone,
+                                    Ativo = ativo
                                 };
                             }
                         }

@@ -10,15 +10,18 @@ builder.Services.AddControllers();
 
 builder.Services.RegisterConfig();
 
+builder.Services.AddSwaggerGen();
+
 Utils.StringConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<GestorEstoqueContext>(options =>
-{
-    options.UseNpgsql(Utils.StringConnection);
-});
+//builder.Services.AddDbContext<GestorEstoqueContext>(options =>
+//{
+//    options.UseNpgsql(Utils.StringConnection);
+//});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors(cors => cors.AllowAnyOrigin());

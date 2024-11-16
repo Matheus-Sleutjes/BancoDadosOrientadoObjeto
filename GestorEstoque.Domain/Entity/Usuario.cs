@@ -4,6 +4,18 @@ namespace GestorEstoque.Domain.Entity
 {
     public class Usuario
     {
+        public Usuario(){}
+
+        public Usuario(string nomeCompleto, byte[] senhaHash, byte[] senhaSal, string email, string telefone)
+        {
+            NomeCompleto = nomeCompleto;
+            Senha = senhaHash;
+            SenhaSal = senhaSal;
+            Email = email;
+            Telefone = telefone;
+            Ativo = true;
+        }
+
         [Key]
         public int UsuarioId { get; set; }
         [MaxLength(100)]

@@ -7,6 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Script\Usuario\AddUsuario.sql" />
+    <None Remove="Script\Usuario\FindUsuario.sql" />
+    <None Remove="Script\Usuario\FindUsuarioByEmail.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Script\Usuario\AddUsuario.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Script\Usuario\FindUsuario.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Script\Usuario\FindUsuarioByEmail.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
