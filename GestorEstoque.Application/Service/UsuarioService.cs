@@ -44,5 +44,56 @@ namespace GestorEstoque.Application.Service
                 Ativo = usuario.Ativo
             };
         }
+
+        public async Task<bool> Update(int usuarioId, UsuarioDto dto)
+        {
+            var usuario = await _usuarioRepository.Find(usuarioId);
+            if (usuario == null) return false;
+
+            usuario.AtualizarAtributos(dto);
+
+            if (!usuario.Validar()) return false;
+
+            return await _usuarioRepository.Update(usuario);
+        }
+
+        public async Task<bool> UpdateSenha(int usuarioId, string senhaNova)
+        {
+            var usuario = await _usuarioRepository.Find(usuarioId);
+            if (usuario == null) return false;
+
+            using (var hmac = new HMACSHA512())
+            {
+                var senhaSal = hmac.Key;
+                var senhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(senhaNova));
+
+                usuario.AtualizarSenha(senhaSal, senhaHash);
+            }
+
+            return await _usuarioRepository.Update(usuario);
+        }
+
+        public async Task<UsuarioDto?> Login(UsuarioDto dto)
+        {
+            var usuario = await _usuarioRepository.FindByEmail(dto.Email);
+            if (usuario == null) return null;
+
+            using (var hmac = new HMACSHA512(usuario.SenhaSal))
+            {
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Senha));
+                if (computedHash.SequenceEqual(usuario.Senha))
+                    return new UsuarioDto() { NomeCompleto = usuario.NomeCompleto };
+
+                return null;
+            }
+        }
+
+        public async Task<bool> Remove(int usuarioId)
+        {
+            var usuario = await _usuarioRepository.Find(usuarioId);
+            if (usuario == null) return false;
+
+            return await _usuarioRepository.Remove(usuarioId);
+        }
     }
 }

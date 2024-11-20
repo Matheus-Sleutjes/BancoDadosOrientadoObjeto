@@ -10,6 +10,8 @@
     <None Remove="Script\Usuario\AddUsuario.sql" />
     <None Remove="Script\Usuario\FindUsuario.sql" />
     <None Remove="Script\Usuario\FindUsuarioByEmail.sql" />
+    <None Remove="Script\Usuario\RemoveUsuario.sql" />
+    <None Remove="Script\Usuario\UpdateUsuario.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +22,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Script\Usuario\FindUsuarioByEmail.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Script\Usuario\RemoveUsuario.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Script\Usuario\UpdateUsuario.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

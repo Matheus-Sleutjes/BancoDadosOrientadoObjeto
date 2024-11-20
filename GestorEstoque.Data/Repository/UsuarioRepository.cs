@@ -45,7 +45,6 @@ namespace GestorEstoque.Data.Repository
                 }
             }
         }
-
         public async Task<Usuario> Find(int id)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
@@ -143,6 +142,80 @@ namespace GestorEstoque.Data.Repository
                 finally
                 {
                     connection.Close();
+                }
+            }
+        }
+        public async Task<bool> Update(Usuario usuario)
+        {
+            string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "UpdateUsuario.sql"));
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
+            {
+                connection.Open();
+                var retorno = 0;
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UsuarioId", usuario.UsuarioId);
+                            command.Parameters.AddWithValue("@NomeCompleto", usuario.NomeCompleto);
+                            command.Parameters.AddWithValue("@Senha", usuario.Senha);
+                            command.Parameters.AddWithValue("@SenhaSal", usuario.SenhaSal);
+                            command.Parameters.AddWithValue("@Email", usuario.Email);
+                            command.Parameters.AddWithValue("@Telefone", usuario.Telefone);
+                            command.Parameters.AddWithValue("@Ativo", usuario.Ativo);
+
+                            retorno = await command.ExecuteNonQueryAsync();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.WriteLine($"Erro - Update - Usuario: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                    return retorno == 1;
+                }
+            }
+        }
+        public async Task<bool> Remove(int usuarioId)
+        {
+            string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "RemoveUsuario.sql"));
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
+            {
+                connection.Open();
+                var retorno = 0;
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UsuarioId", usuarioId);
+
+                            retorno = await command.ExecuteNonQueryAsync();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.WriteLine($"Erro - Remove - Usuario: {ex.Message}");
+                    }
+                    finally
+                    {
+                        connection.Close();
+                    }
+                    return retorno == 1;
                 }
             }
         }

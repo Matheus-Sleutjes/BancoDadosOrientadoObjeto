@@ -1,5 +1,4 @@
-﻿using GestorEstoque.Domain.Dto;
-using GestorEstoque.Domain.Entity;
+﻿using GestorEstoque.Domain.Entity;
 
 namespace GestorEstoque.Data.Contract
 {
@@ -8,7 +7,7 @@ namespace GestorEstoque.Data.Contract
         Task<bool> Add(Usuario dto);
         Task<Usuario> Find(int id);
         Task<Usuario> FindByEmail(string email);
-        //Usuario Find(int id);
-        //Usuario GetByEmail(string email);
+        Task<bool> Update(Usuario usuario);
+        Task<bool> Remove(int usuarioId);
     }
 }

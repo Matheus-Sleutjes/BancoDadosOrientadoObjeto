@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GestorEstoque.Domain.Dto;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestorEstoque.Domain.Entity
 {
@@ -26,5 +27,28 @@ namespace GestorEstoque.Domain.Entity
         [MaxLength(15)]
         public string Telefone { get; set; } = string.Empty;
         public bool Ativo { get; set; }
+
+        public void AtualizarAtributos(UsuarioDto dto)
+        {
+            NomeCompleto = dto.NomeCompleto ?? NomeCompleto;
+            Email = dto.Email ?? Email;
+            Telefone = dto.Telefone ?? Telefone;
+            Ativo = dto.Ativo;
+        }
+
+        public void AtualizarSenha(byte[] senhaSal, byte[] senha)
+        {
+            Senha = senha;
+            SenhaSal = senhaSal;
+        }
+
+        public bool Validar()
+        {
+            if (NomeCompleto.Length > 100) return false;
+            if (Email.Length > 150) return false;
+            if (Telefone.Length > 15) return false;
+
+            return true;
+        }
     }
 }

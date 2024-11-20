@@ -27,5 +27,37 @@ namespace GestorEstoque.API.Controllers
 
             return Ok(retorno);
         }
+
+        [HttpPut("{usuarioId}")]
+        public async Task<IActionResult> Update(int usuarioId, [FromBody]UsuarioDto dto)
+        {
+            var retorno = await _usuarioService.Update(usuarioId, dto);
+
+            return Ok(retorno);
+        }
+
+        [HttpPut("Senha/{usuarioId}")]
+        public async Task<IActionResult> UpdateSenha(int usuarioId, [FromBody] string novaSenha)
+        {
+            var retorno = await _usuarioService.UpdateSenha(usuarioId, novaSenha);
+
+            return Ok(retorno);
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] UsuarioDto dto)
+        {
+            var retorno = await _usuarioService.Login(dto);
+
+            return Ok(retorno);
+        }
+
+        [HttpDelete("{usuarioId}")]
+        public async Task<IActionResult> Remove(int usuarioId)
+        {
+            var retorno = await _usuarioService.Remove(usuarioId);
+
+            return Ok(retorno);
+        }
     }
 }
