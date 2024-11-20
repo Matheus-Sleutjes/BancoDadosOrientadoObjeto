@@ -95,5 +95,10 @@ namespace GestorEstoque.Application.Service
 
             return await _usuarioRepository.Remove(usuarioId);
         }
+
+        public async Task<List<UsuarioDto>> Paginacao(Paginacao paginacao)
+        {
+            return await _usuarioRepository.Paginacao(paginacao);
+        }
     }
 }

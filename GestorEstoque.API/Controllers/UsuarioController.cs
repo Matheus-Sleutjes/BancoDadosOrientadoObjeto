@@ -1,5 +1,6 @@
 ﻿using GestorEstoque.Application.Contract;
 using GestorEstoque.Domain.Dto;
+using GestorEstoque.Domain.Entity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestorEstoque.API.Controllers
@@ -56,6 +57,14 @@ namespace GestorEstoque.API.Controllers
         public async Task<IActionResult> Remove(int usuarioId)
         {
             var retorno = await _usuarioService.Remove(usuarioId);
+
+            return Ok(retorno);
+        }
+
+        [HttpPost("Paginacao")]
+        public async Task<IActionResult> Paginacao([FromBody] Paginacao paginacao)
+        {
+            var retorno = await _usuarioService.Paginacao(paginacao);
 
             return Ok(retorno);
         }

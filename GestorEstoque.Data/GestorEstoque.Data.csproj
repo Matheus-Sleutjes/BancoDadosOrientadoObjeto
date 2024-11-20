@@ -10,8 +10,15 @@
     <None Remove="Script\Usuario\AddUsuario.sql" />
     <None Remove="Script\Usuario\FindUsuario.sql" />
     <None Remove="Script\Usuario\FindUsuarioByEmail.sql" />
+    <None Remove="Script\Usuario\PaginacaoUsuario.sql" />
     <None Remove="Script\Usuario\RemoveUsuario.sql" />
     <None Remove="Script\Usuario\UpdateUsuario.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Script\Usuario\PaginacaoUsuario.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

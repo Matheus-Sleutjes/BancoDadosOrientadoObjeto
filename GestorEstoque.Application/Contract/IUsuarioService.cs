@@ -1,4 +1,5 @@
 ﻿using GestorEstoque.Domain.Dto;
+using GestorEstoque.Domain.Entity;
 
 namespace GestorEstoque.Application.Contract
 {
@@ -10,5 +11,6 @@ namespace GestorEstoque.Application.Contract
         Task<bool> UpdateSenha(int usuarioId, string senhaNova);
         Task<UsuarioDto?> Login(UsuarioDto dto);
         Task<bool> Remove(int usuarioId);
+        Task<List<UsuarioDto>> Paginacao(Paginacao paginacao);
     }
 }

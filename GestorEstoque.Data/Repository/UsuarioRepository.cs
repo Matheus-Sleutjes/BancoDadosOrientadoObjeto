@@ -1,4 +1,5 @@
 ﻿using GestorEstoque.Data.Contract;
+using GestorEstoque.Domain.Dto;
 using GestorEstoque.Domain.Entity;
 using Npgsql;
 
@@ -216,6 +217,50 @@ namespace GestorEstoque.Data.Repository
                         connection.Close();
                     }
                     return retorno == 1;
+                }
+            }
+        }
+        public async Task<List<UsuarioDto>> Paginacao(Paginacao paginacao)
+        {
+            using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
+            {
+                List<UsuarioDto> listaRetorno = new();
+                connection.Open();
+                try
+                {
+                    string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "PaginacaoUsuario.sql"));
+                    using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection))
+                    {
+                        command.Parameters.AddWithValue("@Sort", paginacao.Sort);
+                        command.Parameters.AddWithValue("@NomePesquisa", paginacao.Pesquisa ?? string.Empty);
+                        command.Parameters.AddWithValue("@TamanhoPagina", paginacao.TamanhoPagina);
+                        command.Parameters.AddWithValue("@Pagina", paginacao.Pagina); 
+
+                        using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                listaRetorno.Add(new UsuarioDto
+                                {
+                                    UsuarioId = reader.GetInt32(0),
+                                    NomeCompleto = reader.GetString(1),
+                                    Email = reader.GetString(2),
+                                    Telefone = reader.GetString(3),
+                                    Ativo = reader.GetBoolean(4)
+                                });
+                            }
+                        }
+                    }
+                    return listaRetorno;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao executar o comando SQL: {ex.Message}");
+                    return null;
+                }
+                finally
+                {
+                    connection.Close();
                 }
             }
         }
