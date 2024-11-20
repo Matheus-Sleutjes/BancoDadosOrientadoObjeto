@@ -23,6 +23,8 @@ namespace GestorEstoque.API.Controllers
         public async Task<IActionResult> Find(int usuarioId)
         {
             var retorno = await _usuarioService.Find(usuarioId);
+            if (retorno == null) return NotFound();
+
             return Ok(retorno);
         }
     }

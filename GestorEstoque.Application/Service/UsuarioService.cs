@@ -41,6 +41,7 @@ namespace GestorEstoque.Application.Service
                 NomeCompleto = usuario.NomeCompleto,
                 Email = usuario.Email,
                 Telefone = usuario.Telefone,
+                Ativo = usuario.Ativo
             };
         }
     }
