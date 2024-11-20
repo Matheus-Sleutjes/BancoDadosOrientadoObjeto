@@ -16,7 +16,6 @@ namespace GestorEstoque.Domain.Entity
             Ativo = true;
         }
 
-        [Key]
         public int UsuarioId { get; set; }
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;

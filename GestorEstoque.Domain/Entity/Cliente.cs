@@ -4,7 +4,6 @@ namespace GestorEstoque.Domain.Entity
 {
     public class Cliente
     {
-        [Key]
         public int ClienteId { get; set; }
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;
