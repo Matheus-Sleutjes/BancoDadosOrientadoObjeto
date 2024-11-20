@@ -19,8 +19,8 @@ namespace GestorEstoque.Domain.Entity
         public int UsuarioId { get; set; }
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;
-        public byte[] Senha { get; set; }
-        public byte[] SenhaSal { get; set; }
+        public byte[]? Senha { get; set; }
+        public byte[]? SenhaSal { get; set; }
         [MaxLength(150)] 
         public string Email { get; set; } = string.Empty;
         [MaxLength(15)]
