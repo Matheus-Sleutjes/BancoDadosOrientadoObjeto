@@ -11,8 +11,6 @@ namespace GestorEstoque.API.Controllers
     {
         private readonly IUsuarioService _usuarioService = usuarioService;
         
-        //Post, Listagem, Update Usuario, alteração senha, delete usuario
-
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]UsuarioDto dto)
         {

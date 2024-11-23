@@ -11,6 +11,8 @@ namespace GestorEstoque.API.Configuration
         {
             service.AddScoped<IUsuarioRepository, UsuarioRepository>();
             service.AddScoped<IUsuarioService, UsuarioService>();
+            service.AddScoped<IClienteService, ClienteService>();
+            service.AddScoped<IClienteRepository, ClienteRepository>();
         }
     }
 }

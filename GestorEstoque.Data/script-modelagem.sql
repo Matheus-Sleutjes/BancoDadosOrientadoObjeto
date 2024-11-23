@@ -66,3 +66,12 @@ CREATE TABLE "Pagamento" (
     FOREIGN KEY("MetodoPagamentoId") REFERENCES "MetodoPagamento" ("MetodoPagamentoId"),
     FOREIGN KEY("CarrinhoId") REFERENCES "Carrinho" ("CarrinhoId")
 );
+
+INSERT INTO "StatusCarrinho"
+("Descricao")
+VALUES
+('FINALIZADO'),
+('CANCELADO'),
+('PEDIDO'),
+('ORÇAMENTO');
+
