@@ -2,6 +2,7 @@
 using GestorEstoque.Domain.Dto;
 using GestorEstoque.Domain.Entity;
 using Npgsql;
+using System.Data;
 
 namespace GestorEstoque.Data.Repository
 {
@@ -48,53 +49,29 @@ namespace GestorEstoque.Data.Repository
         }
         public async Task<Usuario> Find(int id)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(Utils.StringConnection))
+            var path = Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "FindUsuario.sql");
+            var param = new NpgsqlParameter("@UsuarioId", id);
+            var listParams = new List<NpgsqlParameter>() { param };
+
+            var response = await Proxy.ReaderAsync(path, listParams);
+
+            if (response.Tables.Count > 0 && response.Tables[0].Rows.Count > 0)
             {
-                connection.Open();
-                try
-                {
-                    string sqlScript = File.ReadAllText(Path.Combine("..", "GestorEstoque.Data", "Script", "Usuario", "FindUsuario.sql"));
-                    using (NpgsqlCommand command = new NpgsqlCommand(sqlScript, connection))
-                    {
-                        command.Parameters.AddWithValue("@UsuarioId", id);
+                var row = response.Tables[0].Rows[0];
 
-                        using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
-                        {
-                            if (reader.Read())
-                            {
-                                int usuarioId = reader.GetInt32(0);
-                                string nomeCompleto = reader.GetString(1);
-                                string email = reader.GetString(2);
-                                byte[] senha = reader.GetFieldValue<byte[]>(3);
-                                byte[] senhaSal = reader.GetFieldValue<byte[]>(4);
-                                string telefone = reader.GetFieldValue<string>(5);
-                                bool ativo = reader.GetFieldValue<bool>(6);
-
-                                return new Usuario()
-                                {
-                                    UsuarioId = usuarioId,
-                                    NomeCompleto = nomeCompleto,
-                                    Email = email,
-                                    SenhaSal = senhaSal,
-                                    Senha = senha,
-                                    Telefone = telefone,
-                                    Ativo = ativo
-                                };
-                            }
-                        }
-                    }
-                    return null;
-                }
-                catch (Exception ex)
+                return new Usuario()
                 {
-                    Console.WriteLine($"Erro ao executar o comando SQL: {ex.Message}");
-                    return null;
-                }
-                finally
-                {
-                    connection.Close();
-                }
+                    UsuarioId = row.Field<int>("UsuarioId"),
+                    NomeCompleto = row.Field<string>("NomeCompleto"),
+                    Email = row.Field<string>("Email"),
+                    SenhaSal = row.Field<byte[]>("SenhaSal"),
+                    Senha = row.Field<byte[]>("Senha"),
+                    Telefone = row.Field<string>("Telefone"),
+                    Ativo = row.Field<bool>("Ativo")
+                };
             }
+
+            return null;
         }
         public async Task<Usuario> FindByEmail(string email)
         {
