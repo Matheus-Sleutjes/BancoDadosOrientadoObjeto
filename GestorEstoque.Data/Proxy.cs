@@ -54,5 +54,54 @@ namespace GestorEstoque.Data
                 }
             }
         }
+
+        public async static Task<bool> AnyQueryAsync(string path, List<NpgsqlParameter> listaParameter)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                throw new ArgumentException("O caminho do script SQL é inválido.", nameof(path));
+
+            try
+            {
+                string sqlScript = await File.ReadAllTextAsync(path);
+
+                using (var connection = new NpgsqlConnection(Utils.StringConnection))
+                {
+                    await connection.OpenAsync();
+
+                    using (var transaction = await connection.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            using (var command = new NpgsqlCommand(sqlScript, connection, transaction))
+                            {
+                                foreach (var parameter in listaParameter)
+                                {
+                                    command.Parameters.Add(parameter);
+                                }
+
+                                var rowsAffected = await command.ExecuteNonQueryAsync();
+
+                                await transaction.CommitAsync();
+
+                                return rowsAffected > 0;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await transaction.RollbackAsync();
+
+                            Console.WriteLine($"Erro ao executar o comando SQL, transação revertida: {ex.Message}");
+                            throw; 
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log do erro - fora da transação
+                Console.WriteLine($"Erro geral no método ExecuteNonQueryAsync: {ex.Message}");
+                throw;
+            }
+        }
     }
 }
