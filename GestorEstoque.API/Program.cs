@@ -21,6 +21,7 @@ builder.Services.AddCors(options =>
 });
 
 Utils.StringConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+Utils.KeyToken = builder.Configuration.GetValue<string>("KeyToken");
 
 var app = builder.Build();
 

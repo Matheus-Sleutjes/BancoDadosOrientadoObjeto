@@ -42,8 +42,8 @@ namespace GestorEstoque.Data.Repository
                     UsuarioId = row.Field<int>("UsuarioId"),
                     NomeCompleto = row.Field<string>("NomeCompleto"),
                     Email = row.Field<string>("Email"),
-                    SenhaSal = row.Field<byte[]>("SenhaSal"),
-                    Senha = row.Field<byte[]>("Senha"),
+                    SenhaSal = row.Field<string>("SenhaSal"),
+                    Senha = row.Field<string>("Senha"),
                     Telefone = row.Field<string>("Telefone"),
                     Ativo = row.Field<bool>("Ativo")
                 };
@@ -68,8 +68,8 @@ namespace GestorEstoque.Data.Repository
                     UsuarioId = row.Field<int>("UsuarioId"),
                     NomeCompleto = row.Field<string>("NomeCompleto"),
                     Email = row.Field<string>("Email"),
-                    SenhaSal = row.Field<byte[]>("SenhaSal"),
-                    Senha = row.Field<byte[]>("Senha"),
+                    SenhaSal = row.Field<string>("SenhaSal"),
+                    Senha = row.Field<string>("Senha"),
                     Telefone = row.Field<string>("Telefone"),
                     Ativo = row.Field<bool>("Ativo")
                 };

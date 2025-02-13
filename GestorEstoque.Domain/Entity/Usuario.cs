@@ -7,7 +7,7 @@ namespace GestorEstoque.Domain.Entity
     {
         public Usuario(){}
 
-        public Usuario(string nomeCompleto, byte[] senhaHash, byte[] senhaSal, string email, string telefone)
+        public Usuario(string nomeCompleto, string senhaHash, string senhaSal, string email, string telefone)
         {
             NomeCompleto = nomeCompleto;
             Senha = senhaHash;
@@ -20,8 +20,8 @@ namespace GestorEstoque.Domain.Entity
         public int UsuarioId { get; set; }
         [MaxLength(100)]
         public string NomeCompleto { get; set; } = string.Empty;
-        public byte[]? Senha { get; set; }
-        public byte[]? SenhaSal { get; set; }
+        public string Senha { get; set; }
+        public string SenhaSal { get; set; }
         [MaxLength(150)] 
         public string Email { get; set; } = string.Empty;
         [MaxLength(15)]
@@ -36,7 +36,7 @@ namespace GestorEstoque.Domain.Entity
             Ativo = dto.Ativo;
         }
 
-        public void AtualizarSenha(byte[] senhaSal, byte[] senha)
+        public void AtualizarSenha(string senhaSal, string senha)
         {
             Senha = senha;
             SenhaSal = senhaSal;

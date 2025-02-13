@@ -1,0 +1,36 @@
+<h1>Create patient</h1>
+<div class="container d-flex flex-column align-items-center justify-content-center vh-100 text-center">
+    <form (ngSubmit)="createpatient()" [formGroup]="patientForm" class="w-100" style="max-width: 400px;">
+      <div class="form-group mb-3">
+        <input
+          formControlName="patientName"
+          type="text"
+          class="form-control"
+          placeholder="Insira o nome da sala"
+          [ngClass]="{ 'is-invalid': patientForm.get('patientName')?.invalid && patientForm.get('patientName')?.touched }"
+        />
+        <div *ngIf="patientForm.get('patientName')?.invalid && patientForm.get('patientName')?.touched" class="invalid-feedback">
+          Nome da sala é obrigatório e deve ter no mínimo 3 caracteres.
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary w-100" [disabled]="patientForm.invalid">Criar Sala</button>
+    </form>
+  
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  @if (needsLogin){
+    <div class="overlay">
+      <div class="overlay-inner" style="display: flex; flex-direction: column; gap: 10px; padding: 20px;">
+        <h3>
+          Login
+        </h3>
+        <input [(ngModel)]="login" placeholder="Username">
+        <input [(ngModel)]="password" type="password" placeholder="Password">
+        <button (click)="doLogin(login, password)">Login</button>
+      </div>
+    </div>
+  }

@@ -1,8 +1,8 @@
 CREATE TABLE "Usuario" (
     "UsuarioId" serial PRIMARY KEY,
     "NomeCompleto" Varchar(100),
-    "Senha" bytea,
-    "SenhaSal" bytea,
+    "Senha" Varchar(200),
+    "SenhaSal" Varchar(200),
     "Email" Varchar(150),
     "Ativo" boolean,
     "Telefone" Varchar(15)

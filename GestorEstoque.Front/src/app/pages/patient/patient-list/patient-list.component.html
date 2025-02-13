@@ -1,0 +1,62 @@
+<div *ngIf="storieInPlay == null">
+<h1>Create Storie</h1>
+<div class="container d-flex flex-column align-items-center justify-content-center vh-100 text-center">
+    <form (ngSubmit)="onCreateStorie()" [formGroup]="storieForm" class="w-100" style="max-width: 400px;">
+      <div class="form-group mb-3">
+        <input
+          formControlName="description"
+          type="text"
+          class="form-control"
+          placeholder="Insira a descrição da storie"
+          [ngClass]="{ 'is-invalid': storieForm.get('description')?.invalid && storieForm.get('description')?.touched }"
+        />
+        <div *ngIf="storieForm.get('description')?.invalid && storieForm.get('description')?.touched" class="invalid-feedback">
+          Descrição da storie é obrigatório e deve ter no mínimo 3 caracteres.
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary w-100" [disabled]="storieForm.invalid">Criar Storie</button>
+    </form>
+  
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>
+<div class="poker-selection-container">
+  <form *ngIf="!pokerItemSent && storieInPlay != null" (ngSubmit)="submitPokerItem()">
+    <label for="storieId">Player Id: {{this.currentUser.playerId}}</label>
+    <br/>
+    <label for="storieId">Current Storie Id: {{storieInPlay?.id}}</label>
+    <br/>
+    <label for="storieDescription">Current Storie: {{storieInPlay?.description}}</label>
+    <br/>
+    <select id="pokerItemSelected" [(ngModel)]="pokerItemSelected" name="pokerItemSelected" required>
+      <option [value]= 0> Select an option </option>
+      <option *ngFor="let option of pokerOptions" [value]="option">{{ option }}</option>
+    </select>
+    <br/>
+    <button type="submit" [disabled]="pokerItemSelected === null || pokerItemSelected == '0'">Submit</button>
+  </form>
+
+  <div *ngIf="storieInPlay == null">
+    <h3>Waiting for next storie</h3>
+  </div>
+
+  <div *ngIf="pokerItemSent">
+    <p>You have selected: {{ pokerItemSelected }}</p>
+  </div>
+  <br/>
+  <br/>
+  <h3>Players in the Room:</h3>
+  <div class="poker-table-container">
+    <div class="poker-table">
+      <div *ngFor="let player of players()" class="player">
+        <div class="poker-card" [ngClass]="{ 'hidden': !allPlayersSubmitted(), 'revealed': allPlayersSubmitted() }">
+          {{ player.pokerItemSelected }}
+        </div>
+        <div class="player-name">{{ player.name }}</div>
+      </div>
+    </div>
+  </div>
+</div>

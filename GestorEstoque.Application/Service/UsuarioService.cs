@@ -1,7 +1,12 @@
 ﻿using GestorEstoque.Application.Contract;
+using GestorEstoque.Data;
 using GestorEstoque.Data.Contract;
 using GestorEstoque.Domain.Dto;
 using GestorEstoque.Domain.Entity;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,14 +23,10 @@ namespace GestorEstoque.Application.Service
             var existeUsuario = await _usuarioRepository.FindByEmail(dto.Email);
             if (existeUsuario != null) throw new Exception($"{dto.Email} ja existe!");
 
-            using (var hmac = new HMACSHA512())
-            {
-                var senhaSal = hmac.Key;
-                var senhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Senha));
-                var usuario = new Usuario(dto.NomeCompleto, senhaHash, senhaSal, dto.Email, dto.Telefone);
+            var (senhaHash, senhaSal) = HashPassword(dto.Senha);
+            var usuario = new Usuario(dto.NomeCompleto, senhaHash, senhaSal, dto.Email, dto.Telefone);
 
-                retorno = await _usuarioRepository.Add(usuario);
-            }
+            retorno = await _usuarioRepository.Add(usuario);
 
             return retorno;
         }
@@ -62,13 +63,9 @@ namespace GestorEstoque.Application.Service
             var usuario = await _usuarioRepository.Find(usuarioId);
             if (usuario == null) return false;
 
-            using (var hmac = new HMACSHA512())
-            {
-                var senhaSal = hmac.Key;
-                var senhaHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(senhaNova));
+            var (senhaHash, senhaSal) = HashPassword(senhaNova);
 
-                usuario.AtualizarSenha(senhaSal, senhaHash);
-            }
+            usuario.AtualizarSenha(senhaSal, senhaHash);
 
             return await _usuarioRepository.Update(usuario);
         }
@@ -78,14 +75,14 @@ namespace GestorEstoque.Application.Service
             var usuario = await _usuarioRepository.FindByEmail(dto.Email);
             if (usuario == null) return null;
 
-            using (var hmac = new HMACSHA512(usuario.SenhaSal))
+            if (VerifyPassword(dto.Senha, usuario.Senha, usuario.SenhaSal))
             {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Senha));
-                if (computedHash.SequenceEqual(usuario.Senha))
-                    return new UsuarioDto() { NomeCompleto = usuario.NomeCompleto };
-
-                return null;
+                var token = GenerateToken(usuario.NomeCompleto);
+                var response = new UsuarioDto() { NomeCompleto = usuario.NomeCompleto, Token = token };
+                return response;
             }
+
+            return null;
         }
 
         public async Task<bool> Remove(int usuarioId)
@@ -99,6 +96,62 @@ namespace GestorEstoque.Application.Service
         public async Task<List<UsuarioDto>> Paginacao(Paginacao paginacao)
         {
             return await _usuarioRepository.Paginacao(paginacao);
+        }
+
+        private string GenerateToken(string nomeCompleto )
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, nomeCompleto),
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utils.KeyToken));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+
+        private (string senhaHash, string salt) HashPassword(string senha)
+        {
+            byte[] salt = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            byte[] hash = KeyDerivation.Pbkdf2(
+                password: senha,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA512,
+                iterationCount: 100000,  // Aumenta a dificuldade de brute force
+                numBytesRequested: 32
+            );
+
+            return (Convert.ToBase64String(hash), Convert.ToBase64String(salt));
+        }
+
+        private bool VerifyPassword(string senhaDigitada, string senhaHashArmazenada, string saltArmazenado)
+        {
+            byte[] salt = Convert.FromBase64String(saltArmazenado);
+            byte[] hashArmazenado = Convert.FromBase64String(senhaHashArmazenada);
+
+            byte[] hashDigitado = KeyDerivation.Pbkdf2(
+                password: senhaDigitada,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA512,
+                iterationCount: 100000,
+                numBytesRequested: 32
+            );
+
+            return CryptographicOperations.FixedTimeEquals(hashDigitado, hashArmazenado);
         }
     }
 }
